@@ -14,25 +14,44 @@ const App = () => {
   const [isCorrect, setIsCorrect] = useState(null);
   const [attempts, setAttempts] = useState(0);
   const [score, setScore] = useState(0);
+  const [error, setError] = useState('');
   const totalAttempts = 10;
 
   const checkAnswer = () => {
-    if (attempts < totalAttempts) {
-      const correctAnswer = factor1 * factor2;
-      if (parseInt(userAnswer) === correctAnswer) {
-        setScore(score + 1);
-        setIsCorrect(true);
-      } else {
-        setIsCorrect(false);
-      }
+    // Зупиняємо гру, якщо кількість спроб досягла ліміту
+    if (attempts >= totalAttempts) {
+      return;
+    }
 
-      setAttempts(attempts + 1);
-      setUserAnswer('');
+    // Перевірка на порожнє поле
+    if (!userAnswer.trim()) {
+      setError('Потрібно вказати відповідь!');
+      return;
+    }
 
-      if (attempts + 1 < totalAttempts) {
-        setFactor1(Math.floor(Math.random() * 10) + 1);
-        setFactor2(Math.floor(Math.random() * 10) + 1);
-      }
+    // Перевірка, чи відповідь є числом
+    if (isNaN(userAnswer)) {
+      setError('Введіть тільки цифри!');
+      return;
+    }
+
+    setError(''); // Очищення повідомлення про помилку
+
+    const correctAnswer = factor1 * factor2;
+    if (parseInt(userAnswer) === correctAnswer) {
+      setScore(score + 1);
+      setIsCorrect(true);
+    } else {
+      setIsCorrect(false);
+    }
+
+    setAttempts(attempts + 1);
+    setUserAnswer('');
+
+    // Оновлення факторів, якщо ще є спроби
+    if (attempts + 1 < totalAttempts) {
+      setFactor1(Math.floor(Math.random() * 10) + 1);
+      setFactor2(Math.floor(Math.random() * 10) + 1);
     }
   };
 
@@ -43,15 +62,25 @@ const App = () => {
     setIsCorrect(null);
     setAttempts(0);
     setScore(0);
+    setError('');
   };
 
   return (
     <div>
-      <Counter current={attempts + 1} total={totalAttempts} />
-      <MultiplicationProblem factor1={factor1} factor2={factor2} />
-      <InputField value={userAnswer} onChange={(e) => setUserAnswer(e.target.value)} />
-      <SubmitButton onClick={checkAnswer} />
-      <ResultMessage isCorrect={isCorrect} />
+      <Counter current={Math.min(attempts + 1, totalAttempts)} total={totalAttempts} />
+      {attempts < totalAttempts && (
+        <>
+          <MultiplicationProblem factor1={factor1} factor2={factor2} />
+          <InputField
+            value={userAnswer}
+            onChange={(e) => setUserAnswer(e.target.value)}
+            placeholder="Введіть відповідь"
+          />
+          <SubmitButton onClick={checkAnswer} />
+          {error && <div style={{ color: 'red', marginTop: '8px' }}>{error}</div>}
+          <ResultMessage isCorrect={isCorrect} />
+        </>
+      )}
       {attempts >= totalAttempts && (
         <div>
           <p>Гра завершена! Твій результат: {score} з {totalAttempts}</p>

@@ -1,7 +1,7 @@
 const Counter = ({ current, total }) => {
     return (
       <div>
-        Запитання № {current} з {total}
+       <h1> Запитання № {current} з {total}</h1>
       </div>
     );
   };

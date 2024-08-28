@@ -1,6 +1,8 @@
+import css from "./MultiplicationProblem.module.css"
+
 const MultiplicationProblem = ({ factor1, factor2 }) => {
     return (
-      <div>
+      <div className={css.factors}>
         {factor1} × {factor2} =
       </div>
     );
