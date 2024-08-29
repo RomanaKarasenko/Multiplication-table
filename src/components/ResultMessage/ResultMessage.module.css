@@ -1,5 +1,9 @@
 .result{
-    margin-top: 35px;
+margin-top: 35px;
 font-size: 54px;
 font-weight: 500;
+}
+img{
+    width: 320px;
+    height: auto;
 }
